@@ -49,18 +49,18 @@ lib/
 
 ```mermaid
 graph TD
-    subgraph Presentation Layer
+    subgraph Presentation["Presentation Layer"]
         UI[Screens & Widgets]
         Canvas[RosaryPainter Canvas]
     end
 
-    subgraph State Management Layer (Riverpod)
+    subgraph StateManagement["State Management Layer (Riverpod)"]
         SettingsProv[AppSettingsProvider]
         SessionProv[RosarySessionProvider]
         TTSProv[TtsProvider]
     end
 
-    subgraph Data & Domain Layer
+    subgraph DataDomain["Data & Domain Layer"]
         RosaryRepo[RosaryRepository]
         TTSRepo[TtsRepository]
         Datasource[PrayerTexts Datasource]

@@ -2,9 +2,10 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-v3.22+-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-v3.0+-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Riverpod](https://img.shields.io/badge/Riverpod-v2.6+-055399?logo=flutter&logoColor=white)](https://riverpod.dev)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An elegant, interactive, and immersive bilingual Roman Catholic Rosary application built with **Flutter**. Designed with a medieval fantasy-inspired RPG aesthetic, it guides users through daily prayers with full audio text-to-speech narrations, progress tracking, and interactive custom-painted bead layouts.
+An elegant, interactive, and immersive bilingual Roman Catholic Rosary application built with **Flutter**. Designed with a medieval fantasy-inspired RPG aesthetic, it guides users through daily prayers with full audio text-to-speech narrations, progress tracking, and interactive custom-painted bead layouts. Refactored using **Clean Architecture** and **Riverpod**.
 
 ---
 
@@ -25,20 +26,59 @@ An elegant, interactive, and immersive bilingual Roman Catholic Rosary applicati
 
 ## 🛠️ Architecture & Tech Stack
 
-The application follows a modular, feature-oriented structure in Flutter:
+The application follows **Clean Layer-First Architecture** paired with **Riverpod** for state management:
+
+```
+lib/
+├── core/
+│   ├── localization/           # Localized strings and language keys
+│   └── theme/                  # QuestUI ThemeData definitions (light/dark)
+├── data/
+│   ├── datasources/            # Raw prayer text constants
+│   ├── models/                 # RosaryStep, MysteryType, BeadType domain models
+│   └── repositories/           # RosaryRepository & TtsRepository
+├── presentation/
+│   ├── painters/               # RosaryPainter vector canvas renderer
+│   ├── screens/                # HomeScreen, RosaryScreen, RosaryGuideScreen
+│   └── widgets/                # Reusable UI components (ControlBar, IntentionDialog, MysterySelector, PrayerPanel)
+├── providers/                  # Riverpod Notifiers (AppSettings, RosarySession, TtsState)
+└── main.dart                   # Entry point wrapped in ProviderScope
+```
+
+### Clean Architecture Flow
 
 ```mermaid
 graph TD
-    A[main.dart] --> B[HomeScreen]
-    B --> C[RosaryScreen - Interactive Canvas]
-    B --> D[RosaryGuideScreen - Text Mode]
-    C --> E[RosaryPainter - Custom Painter]
-    C --> F[PrayerPanel & ControlBar]
-    C --> G[Audio & Neural TTS Controllers]
-    G --> H[just_audio & flutter_edge_tts]
+    subgraph Presentation Layer
+        UI[Screens & Widgets]
+        Canvas[RosaryPainter Canvas]
+    end
+
+    subgraph State Management Layer (Riverpod)
+        SettingsProv[AppSettingsProvider]
+        SessionProv[RosarySessionProvider]
+        TTSProv[TtsProvider]
+    end
+
+    subgraph Data & Domain Layer
+        RosaryRepo[RosaryRepository]
+        TTSRepo[TtsRepository]
+        Datasource[PrayerTexts Datasource]
+        Models[RosaryStep & MysteryType Models]
+    end
+
+    UI --> SessionProv
+    UI --> SettingsProv
+    UI --> TTSProv
+    SessionProv --> RosaryRepo
+    TTSProv --> TTSRepo
+    RosaryRepo --> Datasource
+    RosaryRepo --> Models
+    Canvas --> UI
 ```
 
 ### Core Libraries Used
+- [**flutter_riverpod**](https://pub.dev/packages/flutter_riverpod): Reactive, compile-safe state management & dependency injection framework.
 - [**flutter_edge_tts**](https://pub.dev/packages/flutter_edge_tts): High-quality neural voice synthesis utilizing edge services.
 - [**just_audio**](https://pub.dev/packages/just_audio): Robust local audio streaming and player controller.
 - [**path_provider**](https://pub.dev/packages/path_provider): Manages transient directories for caching audio files dynamically.
@@ -67,7 +107,7 @@ To match the traditional grandeur of historical prayer books, the UI leverages t
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/rosary.git
+   git clone https://github.com/haliknihudas666/rosary.git
    cd rosary
    ```
 

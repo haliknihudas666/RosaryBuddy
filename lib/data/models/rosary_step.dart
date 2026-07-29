@@ -1,6 +1,7 @@
 enum BeadType { cross, large, small }
 
 enum PrayerCategory {
+  intention,
   signOfCross,
   apostlesCreed,
   ourFather,

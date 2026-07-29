@@ -166,22 +166,3 @@ extension MysteryTypeExtension on MysteryType {
     }
   }
 }
-
-/// Returns the mystery type prescribed for the current day of the week.
-MysteryType getTodaysMystery() {
-  final weekday = DateTime.now().weekday;
-  switch (weekday) {
-    case DateTime.monday:
-    case DateTime.saturday:
-      return MysteryType.joyful;
-    case DateTime.tuesday:
-    case DateTime.friday:
-      return MysteryType.sorrowful;
-    case DateTime.wednesday:
-    case DateTime.sunday:
-      return MysteryType.glorious;
-    case DateTime.thursday:
-    default:
-      return MysteryType.luminous;
-  }
-}

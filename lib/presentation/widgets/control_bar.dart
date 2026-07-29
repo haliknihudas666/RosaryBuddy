@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../data/localization_data.dart';
 
+import '../../core/localization/localization_data.dart';
+import '../../providers/app_settings_provider.dart';
+
+/// Bottom control bar for the interactive rosary screen.
+///
+/// Now a ConsumerWidget that reads providers directly instead of taking
+/// many constructor parameters.
 class ControlBar extends StatelessWidget {
   final bool isAutoMode;
   final bool isSpeaking;
@@ -31,16 +38,22 @@ class ControlBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final topBorderColor = isDark ? const Color(0xFF3D2517) : const Color(0xFFE5D3BD);
-    final buttonColor = isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
-    final disabledColor = isDark ? const Color(0xFF5C3D2E) : const Color(0xFFD2BEA6);
-    final iconColor = canGoForward ? (isDark ? const Color(0xFF1A0F0A) : const Color(0xFFF5E6D3)) : disabledColor;
+    final topBorderColor =
+        isDark ? const Color(0xFF3D2517) : const Color(0xFFE5D3BD);
+    final buttonColor =
+        isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
+    final disabledColor =
+        isDark ? const Color(0xFF5C3D2E) : const Color(0xFFD2BEA6);
+    final iconColor = canGoForward
+        ? (isDark ? const Color(0xFF1A0F0A) : const Color(0xFFF5E6D3))
+        : disabledColor;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
       decoration: BoxDecoration(
         color: Colors.transparent,
-        border: Border(top: BorderSide(color: topBorderColor, width: 1)),
+        border:
+            Border(top: BorderSide(color: topBorderColor, width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -67,20 +80,32 @@ class ControlBar extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: canGoForward
-                    ? Border.all(color: Theme.of(context).colorScheme.primary, width: 1.5)
+                    ? Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 1.5)
                     : Border.all(color: disabledColor, width: 1),
                 gradient: canGoForward
                     ? LinearGradient(
-                        colors: [Theme.of(context).colorScheme.primary, const Color(0xFFB8780A)],
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          const Color(0xFFB8780A)
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       )
                     : null,
-                color: canGoForward ? null : (isDark ? const Color(0xFF2C1A10) : const Color(0xFFE5D3BD)),
+                color: canGoForward
+                    ? null
+                    : (isDark
+                        ? const Color(0xFF2C1A10)
+                        : const Color(0xFFE5D3BD)),
                 boxShadow: canGoForward
                     ? [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.20),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.20),
                           blurRadius: 14,
                           spreadRadius: 1,
                         ),
@@ -88,7 +113,9 @@ class ControlBar extends StatelessWidget {
                     : null,
               ),
               child: Icon(
-                isComplete ? Icons.check_rounded : Icons.skip_next_rounded,
+                isComplete
+                    ? Icons.check_rounded
+                    : Icons.skip_next_rounded,
                 color: iconColor,
                 size: 30,
               ),
@@ -98,9 +125,13 @@ class ControlBar extends StatelessWidget {
             icon: isAutoMode
                 ? Icons.pause_circle_filled_rounded
                 : Icons.play_circle_fill_rounded,
-            label: isAutoMode ? LocalizationData.getText(lang, 'stop') : LocalizationData.getText(lang, 'auto'),
+            label: isAutoMode
+                ? LocalizationData.getText(lang, 'stop')
+                : LocalizationData.getText(lang, 'auto'),
             onTap: onToggleAuto,
-            color: isAutoMode ? Theme.of(context).colorScheme.primary : buttonColor,
+            color: isAutoMode
+                ? Theme.of(context).colorScheme.primary
+                : buttonColor,
             iconSize: 28,
           ),
         ],

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../models/rosary_step.dart';
-import '../data/localization_data.dart';
 
+import '../../core/localization/localization_data.dart';
+import '../../data/models/rosary_step.dart';
+import 'pulsing_dot.dart';
+
+/// Panel displaying the current prayer text, title, progress bar, and
+/// special cards for mystery announcements and intentions.
 class PrayerPanel extends StatelessWidget {
   final RosaryStep step;
   final int stepIndex;
@@ -27,7 +31,10 @@ class PrayerPanel extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+            color: Theme.of(context)
+                .colorScheme
+                .primary
+                .withValues(alpha: 0.15),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -38,7 +45,8 @@ class PrayerPanel extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(height: 2, color: Theme.of(context).colorScheme.primary),
+            Container(
+                height: 2, color: Theme.of(context).colorScheme.primary),
             _buildHandle(context),
             _buildProgressBar(context),
             _buildTitle(context),
@@ -57,7 +65,8 @@ class PrayerPanel extends StatelessWidget {
         width: 36,
         height: 4,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF5C3D2E) : const Color(0xFFD2BEA6),
+          color:
+              isDark ? const Color(0xFF5C3D2E) : const Color(0xFFD2BEA6),
           borderRadius: BorderRadius.circular(2),
         ),
       ),
@@ -67,7 +76,8 @@ class PrayerPanel extends StatelessWidget {
   Widget _buildProgressBar(BuildContext context) {
     final progress = (stepIndex + 1) / totalSteps;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textMutedColor = isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
+    final textMutedColor =
+        isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
 
     final stepWord = LocalizationData.getText(lang, 'step');
     final ofWord = LocalizationData.getText(lang, 'of');
@@ -92,7 +102,7 @@ class PrayerPanel extends StatelessWidget {
               if (isSpeaking)
                 Row(
                   children: [
-                    _PulsingDot(),
+                    const PulsingDot(),
                     const SizedBox(width: 5),
                     Text(
                       readingWord,
@@ -112,9 +122,11 @@ class PrayerPanel extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: isDark ? const Color(0xFF1A0F0A) : const Color(0xFFF5E6D3),
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+              backgroundColor: isDark
+                  ? const Color(0xFF1A0F0A)
+                  : const Color(0xFFF5E6D3),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.primary),
               minHeight: 3,
             ),
           ),
@@ -125,8 +137,10 @@ class PrayerPanel extends StatelessWidget {
 
   Widget _buildTitle(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textMutedColor = isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
-    final dividerColor = isDark ? const Color(0xFF3D2517) : const Color(0xFFE5D3BD);
+    final textMutedColor =
+        isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
+    final dividerColor =
+        isDark ? const Color(0xFF3D2517) : const Color(0xFFE5D3BD);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
@@ -148,10 +162,11 @@ class PrayerPanel extends StatelessWidget {
               ),
               if (step.stepCounter != null)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF581C87).withValues(alpha: 0.15),
+                    color:
+                        const Color(0xFF581C87).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(2),
                     border: Border.all(
                       color: const Color(0xFF581C87),
@@ -161,7 +176,9 @@ class PrayerPanel extends StatelessWidget {
                   child: Text(
                     step.stepCounter!,
                     style: GoogleFonts.cinzel(
-                      color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF581C87),
+                      color: isDark
+                          ? const Color(0xFFF5E6D3)
+                          : const Color(0xFF581C87),
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
@@ -189,45 +206,126 @@ class PrayerPanel extends StatelessWidget {
   Widget _buildPrayerText(BuildContext context) {
     final isMysteryAnnounce =
         step.category == PrayerCategory.mysteryAnnouncement;
+    final isIntention = step.category == PrayerCategory.intention;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textMainColor = isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A);
+    final textMainColor =
+        isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A);
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: isMysteryAnnounce
           ? _buildMysteryCard(context)
-          : Text(
-              step.text,
-              style: GoogleFonts.spectral(
-                color: textMainColor,
-                fontSize: 16,
-                height: 1.7,
+          : isIntention
+              ? _buildIntentionCard(context)
+              : Text(
+                  step.text,
+                  style: GoogleFonts.spectral(
+                    color: textMainColor,
+                    fontSize: 16,
+                    height: 1.7,
+                  ),
+                ),
+    );
+  }
+
+  Widget _buildIntentionCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textMainColor =
+        isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A);
+    final textMutedColor =
+        isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color:
+            isDark ? const Color(0xFF3D2517) : const Color(0xFFD2BEA6),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: Theme.of(context)
+              .colorScheme
+              .primary
+              .withValues(alpha: 0.40),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context)
+                .colorScheme
+                .primary
+                .withValues(alpha: 0.15),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.volunteer_activism_rounded,
+                size: 16,
+                color: Theme.of(context).colorScheme.primary,
               ),
+              const SizedBox(width: 6),
+              Text(
+                step.title.toUpperCase(),
+                style: GoogleFonts.cinzel(
+                  color: textMutedColor,
+                  fontSize: 11,
+                  letterSpacing: 1.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            step.text,
+            style: GoogleFonts.spectral(
+              color: textMainColor,
+              fontSize: 16.5,
+              height: 1.6,
+              fontStyle: FontStyle.italic,
             ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildMysteryCard(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textMainColor = isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A);
-    final textMutedColor = isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
+    final textMainColor =
+        isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A);
+    final textMutedColor =
+        isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
 
     final meditationWord = LocalizationData.getText(lang, 'meditation');
-    final nextOurFatherWord = LocalizationData.getText(lang, 'next_our_father');
+    final nextOurFatherWord =
+        LocalizationData.getText(lang, 'next_our_father');
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF3D2517) : const Color(0xFFD2BEA6),
+        color:
+            isDark ? const Color(0xFF3D2517) : const Color(0xFFD2BEA6),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.40),
+          color: Theme.of(context)
+              .colorScheme
+              .primary
+              .withValues(alpha: 0.40),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+            color: Theme.of(context)
+                .colorScheme
+                .primary
+                .withValues(alpha: 0.15),
             blurRadius: 8,
           ),
         ],
@@ -268,43 +366,4 @@ class PrayerPanel extends StatelessWidget {
       ),
     );
   }
-}
-
-class _PulsingDot extends StatefulWidget {
-  @override
-  State<_PulsingDot> createState() => _PulsingDotState();
-}
-
-class _PulsingDotState extends State<_PulsingDot>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late Animation<double> _anim;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700))
-      ..repeat(reverse: true);
-    _anim = Tween<double>(begin: 0.3, end: 1.0).animate(_ctrl);
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => FadeTransition(
-        opacity: _anim,
-        child: Container(
-          width: 7,
-          height: 7,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      );
 }

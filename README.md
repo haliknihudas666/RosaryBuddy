@@ -24,6 +24,14 @@ An elegant, interactive, and immersive bilingual Roman Catholic Rosary applicati
 
 ---
 
+## 📱 Screenshots
+
+| Home (Light / Tagalog) | Home (Dark / English) | Interactive Rosary Board | Reading Guide Mode |
+| :---: | :---: | :---: | :---: |
+| <img src="screenshots/Screenshot_1785345207.png" width="220" alt="Home Light Theme Tagalog" /> | <img src="screenshots/Screenshot_1785345238.png" width="220" alt="Home Dark Theme English" /> | <img src="screenshots/Screenshot_1785345215.png" width="220" alt="Interactive Rosary Board" /> | <img src="screenshots/Screenshot_1785345221.png" width="220" alt="Reading Guide Mode" /> |
+
+---
+
 ## 🛠️ Architecture & Tech Stack
 
 The application follows **Clean Layer-First Architecture** paired with **Riverpod** for state management:

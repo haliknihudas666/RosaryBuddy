@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../core/localization/localization_data.dart';
-import '../../data/models/mystery_type.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_settings_provider.dart';
 import '../../providers/rosary_session_provider.dart';
 import '../../providers/tts_provider.dart';
@@ -16,10 +15,7 @@ import '../widgets/prayer_panel.dart';
 class RosaryScreen extends ConsumerStatefulWidget {
   final String? initialIntention;
 
-  const RosaryScreen({
-    super.key,
-    this.initialIntention,
-  });
+  const RosaryScreen({super.key, this.initialIntention});
 
   @override
   ConsumerState<RosaryScreen> createState() => _RosaryScreenState();
@@ -57,7 +53,6 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
   }
 
   void _showCompletionDialog() {
-    final lang = ref.read(languageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Theme.of(context).colorScheme.primary;
 
@@ -69,9 +64,7 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(
-            color: isDark
-                ? const Color(0xFF5C3D2E)
-                : const Color(0xFFD2BEA6),
+            color: isDark ? const Color(0xFF5C3D2E) : const Color(0xFFD2BEA6),
             width: 1.5,
           ),
         ),
@@ -80,7 +73,7 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
             const Text('🌹', style: TextStyle(fontSize: 40)),
             const SizedBox(height: 8),
             Text(
-              LocalizationData.getText(lang, 'dialog_title'),
+              AppLocalizations.of(context).dialog_title,
               textAlign: TextAlign.center,
               style: GoogleFonts.cinzel(
                 color: primaryColor,
@@ -91,12 +84,10 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
           ],
         ),
         content: Text(
-          LocalizationData.getText(lang, 'dialog_body'),
+          AppLocalizations.of(context).dialog_body,
           textAlign: TextAlign.center,
           style: GoogleFonts.spectral(
-            color: isDark
-                ? const Color(0xFFF5E6D3)
-                : const Color(0xFF1A0F0A),
+            color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A),
             fontSize: 15,
             height: 1.5,
           ),
@@ -109,7 +100,7 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
               _onStepChanged();
             },
             child: Text(
-              LocalizationData.getText(lang, 'dialog_again'),
+              AppLocalizations.of(context).dialog_again,
               style: GoogleFonts.cinzel(
                 color: primaryColor,
                 fontWeight: FontWeight.bold,
@@ -126,7 +117,7 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
               foregroundColor: const Color(0xFF1A0F0A),
             ),
             child: Text(
-              LocalizationData.getText(lang, 'dialog_close'),
+              AppLocalizations.of(context).dialog_close,
               style: GoogleFonts.cinzel(fontWeight: FontWeight.bold),
             ),
           ),
@@ -159,7 +150,7 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
           },
         ),
         title: Text(
-          LocalizationData.getText(lang, 'interactive_title'),
+          AppLocalizations.of(context).interactive_title,
           style: GoogleFonts.cinzel(
             color: Theme.of(context).colorScheme.primary,
             fontSize: 18,
@@ -176,8 +167,8 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
               color: ttsState.ttsEnabled
                   ? Theme.of(context).colorScheme.primary
                   : (isDark
-                      ? const Color(0xFF5C3D2E)
-                      : const Color(0xFFD2BEA6)),
+                        ? const Color(0xFF5C3D2E)
+                        : const Color(0xFFD2BEA6)),
             ),
             onPressed: () {
               ref.read(ttsProvider.notifier).toggleEnabled();
@@ -193,9 +184,7 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
               selectedType: session.mysteryType,
               onSelected: (type) {
                 ref.read(ttsProvider.notifier).stop();
-                ref
-                    .read(rosarySessionProvider.notifier)
-                    .setMysteryType(type);
+                ref.read(rosarySessionProvider.notifier).setMysteryType(type);
                 _onStepChanged();
               },
             ),
@@ -264,8 +253,9 @@ class _RosaryScreenState extends ConsumerState<RosaryScreen>
                     },
                     onToggleAuto: () {
                       HapticFeedback.selectionClick();
-                      final sessionNotifier =
-                          ref.read(rosarySessionProvider.notifier);
+                      final sessionNotifier = ref.read(
+                        rosarySessionProvider.notifier,
+                      );
                       sessionNotifier.toggleAutoMode();
                       if (ref.read(rosarySessionProvider).isAutoMode &&
                           !ref.read(ttsProvider).isSpeaking) {

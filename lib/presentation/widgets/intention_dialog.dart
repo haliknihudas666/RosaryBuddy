@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../core/localization/localization_data.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/app_settings_provider.dart';
 
 /// Dialog for entering prayer intentions before starting the Rosary.
@@ -58,35 +58,35 @@ class _IntentionDialogState extends ConsumerState<IntentionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = ref.watch(languageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Theme.of(context).colorScheme.primary;
     final surfaceColor = Theme.of(context).colorScheme.surface;
-    final borderColor =
-        isDark ? const Color(0xFF5C3D2E) : const Color(0xFFD2BEA6);
-    final textMainColor =
-        isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A);
-    final textMutedColor =
-        isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
+    final borderColor = isDark
+        ? const Color(0xFF5C3D2E)
+        : const Color(0xFFD2BEA6);
+    final textMainColor = isDark
+        ? const Color(0xFFF5E6D3)
+        : const Color(0xFF1A0F0A);
+    final textMutedColor = isDark
+        ? const Color(0xFFBFA98A)
+        : const Color(0xFF5C3D2E);
 
-    final title = LocalizationData.getText(lang, 'intention_dialog_title');
-    final desc = LocalizationData.getText(lang, 'intention_dialog_desc');
-    final hint = LocalizationData.getText(lang, 'intention_input_hint');
-    final prayWithoutBtn =
-        LocalizationData.getText(lang, 'pray_without_intention');
-    final startWithBtn =
-        LocalizationData.getText(lang, 'start_with_intention');
+    final l10n = AppLocalizations.of(context);
+    final title = l10n.intention_dialog_title;
+    final desc = l10n.intention_dialog_desc;
+    final hint = l10n.intention_input_hint;
+    final prayWithoutBtn = l10n.pray_without_intention;
+    final startWithBtn = l10n.start_with_intention;
 
     final chips = [
-      LocalizationData.getText(lang, 'quick_chip_family'),
-      LocalizationData.getText(lang, 'quick_chip_peace'),
-      LocalizationData.getText(lang, 'quick_chip_guidance'),
+      l10n.quick_chip_family,
+      l10n.quick_chip_peace,
+      l10n.quick_chip_guidance,
     ];
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding:
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 460),
         decoration: BoxDecoration(
@@ -125,8 +125,7 @@ class _IntentionDialogState extends ConsumerState<IntentionDialog> {
                                 ? const Color(0xFF1A0F0A)
                                 : const Color(0xFFF5E6D3),
                             borderRadius: BorderRadius.circular(6),
-                            border:
-                                Border.all(color: borderColor, width: 1),
+                            border: Border.all(color: borderColor, width: 1),
                           ),
                           child: Icon(
                             Icons.volunteer_activism_rounded,
@@ -177,8 +176,7 @@ class _IntentionDialogState extends ConsumerState<IntentionDialog> {
                                   : const Color(0xFFF5E6D3),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color:
-                                    primaryColor.withValues(alpha: 0.4),
+                                color: primaryColor.withValues(alpha: 0.4),
                                 width: 1,
                               ),
                             ),
@@ -230,13 +228,14 @@ class _IntentionDialogState extends ConsumerState<IntentionDialog> {
                         contentPadding: const EdgeInsets.all(12),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
-                          borderSide:
-                              BorderSide(color: borderColor, width: 1),
+                          borderSide: BorderSide(color: borderColor, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
-                          borderSide:
-                              BorderSide(color: primaryColor, width: 1.5),
+                          borderSide: BorderSide(
+                            color: primaryColor,
+                            width: 1.5,
+                          ),
                         ),
                       ),
                     ),
@@ -248,15 +247,12 @@ class _IntentionDialogState extends ConsumerState<IntentionDialog> {
                         // Pray Without Intention Button
                         Expanded(
                           child: TextButton(
-                            onPressed: () =>
-                                Navigator.pop(context, null),
+                            onPressed: () => Navigator.pop(context, null),
                             style: TextButton.styleFrom(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),
-                                side: BorderSide(
-                                    color: borderColor, width: 1),
+                                side: BorderSide(color: borderColor, width: 1),
                               ),
                             ),
                             child: Text(
@@ -284,8 +280,7 @@ class _IntentionDialogState extends ConsumerState<IntentionDialog> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: primaryColor,
                               foregroundColor: const Color(0xFF1A0F0A),
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               elevation: 2,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),

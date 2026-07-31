@@ -1,4 +1,5 @@
-import '../datasources/prayer_texts.dart';
+import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../models/mystery_type.dart';
 import '../models/rosary_step.dart';
 
@@ -32,40 +33,42 @@ class RosaryRepository {
     String lang, {
     String? intention,
   }) {
+    final l10n = lookupAppLocalizations(Locale(lang));
     final isEn = lang == 'en';
     final setName = mysteryType.getSetName(lang);
     final mysteryNames = mysteryType.getMysteryNames(lang);
     final steps = <RosaryStep>[];
 
-    // Prayer text references
-    final signOfCross = isEn ? kSignOfCrossEn : kSignOfCrossTl;
-    final apostlesCreed = isEn ? kApostlesCreedEn : kApostlesCreedTl;
-    final ourFather = isEn ? kOurFatherEn : kOurFatherTl;
-    final hailMary = isEn ? kHailMaryEn : kHailMaryTl;
-    final gloryBe = isEn ? kGloryBeEn : kGloryBeTl;
-    final fatima = isEn ? kFatimaEn : kFatimaTl;
-    final salveRegina = isEn ? kSalveReginaEn : kSalveReginaTl;
-    final closingPrayer = isEn ? kClosingPrayerEn : kClosingPrayerTl;
-    final ordinals = isEn ? _ordinalsEn : _ordinalsTl;
+    // Prayer text references from localization
+    final signOfCross = l10n.text_sign_of_cross;
+    final apostlesCreed = l10n.text_apostles_creed;
+    final ourFather = l10n.text_our_father;
+    final hailMary = l10n.text_hail_mary;
+    final gloryBe = l10n.text_glory_be;
+    final fatima = l10n.text_fatima;
+    final salveRegina = l10n.text_salve_regina;
+    final closingPrayer = l10n.text_closing_prayer;
+    final endingTts = l10n.text_ending_tts;
 
-    // Title strings
-    final intentionTitle =
-        isEn ? 'General Intentions' : 'Pangkalahatang Intensyon';
-    final signOfCrossTitle =
-        isEn ? 'The Sign of the Cross' : 'Ang Pag-antanda ng Krus';
-    final apostlesCreedTitle =
-        isEn ? 'The Apostles\' Creed' : 'Ang Sumasampalataya';
-    final ourFatherTitle = isEn ? 'Our Father' : 'Ama Namin';
-    final hailMaryTitle = isEn ? 'Hail Mary' : 'Aba Ginoong Maria';
-    final gloryBeTitle = isEn ? 'Glory Be' : 'Luwalhati';
-    final fatimaTitle =
-        isEn ? 'The Fatima Prayer' : 'Panalangin ng Fatima';
-    final salveReginaTitle =
-        isEn ? 'Hail, Holy Queen' : 'Aba Po, Santa Mariang Birhen';
-    final closingTitle = isEn ? 'Let Us Pray' : 'Manalangin Tayo';
-    final endingTitle = isEn
-        ? 'Ending — The Sign of the Cross'
-        : 'Pagtatapos — Ang Pag-antanda ng Krus';
+    final ordinals = [
+      l10n.ordinal_1,
+      l10n.ordinal_2,
+      l10n.ordinal_3,
+      l10n.ordinal_4,
+      l10n.ordinal_5,
+    ];
+
+    // Title strings from localization data
+    final intentionTitle = l10n.general_intention_title;
+    final signOfCrossTitle = l10n.title_sign_of_cross;
+    final apostlesCreedTitle = l10n.title_apostles_creed;
+    final ourFatherTitle = l10n.title_our_father;
+    final hailMaryTitle = l10n.title_hail_mary;
+    final gloryBeTitle = l10n.title_glory_be;
+    final fatimaTitle = l10n.title_fatima_prayer;
+    final salveReginaTitle = l10n.title_salve_regina;
+    final closingTitle = l10n.title_closing_prayer;
+    final endingTitle = l10n.title_ending_sign_of_cross;
 
     // ── Opening ──────────────────────────────────────────────────────────────
     if (intention != null && intention.trim().isNotEmpty) {
@@ -202,10 +205,6 @@ class RosaryRepository {
       beadType: BeadType.cross,
     ));
 
-    final endingTts = isEn
-        ? 'In the name of the Father, and of the Son, and of the Holy Spirit. Amen. We have finished praying the Holy Rosary. Thanks be to God.'
-        : 'Sa ngalan ng Ama, ng Anak at ng Espiritu Santo. Amen. Natapos na ang ating pag-dasal ng Santo Rosaryo. Salamat sa Diyos.';
-
     steps.add(RosaryStep(
       beadIndex: -1,
       title: endingTitle,
@@ -218,21 +217,3 @@ class RosaryRepository {
     return steps;
   }
 }
-
-// ─── Ordinals ─────────────────────────────────────────────────────────────────
-
-const _ordinalsTl = [
-  'Unang',
-  'Ikalawang',
-  'Ikatlong',
-  'Ikaapat na',
-  'Ikalimang',
-];
-
-const _ordinalsEn = [
-  'First',
-  'Second',
-  'Third',
-  'Fourth',
-  'Fifth',
-];

@@ -1,55 +1,34 @@
+import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
+
 enum MysteryType { joyful, sorrowful, glorious, luminous }
 
 extension MysteryTypeExtension on MysteryType {
   String getSetName(String lang) {
-    if (lang == 'en') {
-      switch (this) {
-        case MysteryType.joyful:
-          return 'Joyful Mysteries';
-        case MysteryType.sorrowful:
-          return 'Sorrowful Mysteries';
-        case MysteryType.glorious:
-          return 'Glorious Mysteries';
-        case MysteryType.luminous:
-          return 'Luminous Mysteries';
-      }
-    } else {
-      switch (this) {
-        case MysteryType.joyful:
-          return 'Misteryo ng Kasayahan';
-        case MysteryType.sorrowful:
-          return 'Misteryo ng Hapis';
-        case MysteryType.glorious:
-          return 'Misteryo ng Kaluwalhatian';
-        case MysteryType.luminous:
-          return 'Misteryo ng Liwanag';
-      }
+    final l10n = lookupAppLocalizations(Locale(lang));
+    switch (this) {
+      case MysteryType.joyful:
+        return l10n.mystery_set_joyful;
+      case MysteryType.sorrowful:
+        return l10n.mystery_set_sorrowful;
+      case MysteryType.glorious:
+        return l10n.mystery_set_glorious;
+      case MysteryType.luminous:
+        return l10n.mystery_set_luminous;
     }
   }
 
   String getDisplayName(String lang) {
-    if (lang == 'en') {
-      switch (this) {
-        case MysteryType.joyful:
-          return 'Joyful';
-        case MysteryType.sorrowful:
-          return 'Sorrowful';
-        case MysteryType.glorious:
-          return 'Glorious';
-        case MysteryType.luminous:
-          return 'Luminous';
-      }
-    } else {
-      switch (this) {
-        case MysteryType.joyful:
-          return 'Kasayahan';
-        case MysteryType.sorrowful:
-          return 'Hapis';
-        case MysteryType.glorious:
-          return 'Kaluwalhatian';
-        case MysteryType.luminous:
-          return 'Liwanag';
-      }
+    final l10n = lookupAppLocalizations(Locale(lang));
+    switch (this) {
+      case MysteryType.joyful:
+        return l10n.mystery_display_joyful;
+      case MysteryType.sorrowful:
+        return l10n.mystery_display_sorrowful;
+      case MysteryType.glorious:
+        return l10n.mystery_display_glorious;
+      case MysteryType.luminous:
+        return l10n.mystery_display_luminous;
     }
   }
 
@@ -67,102 +46,54 @@ extension MysteryTypeExtension on MysteryType {
   }
 
   String getDayText(String lang) {
-    if (lang == 'en') {
-      switch (this) {
-        case MysteryType.joyful:
-          return 'Monday and Saturday';
-        case MysteryType.sorrowful:
-          return 'Tuesday and Friday';
-        case MysteryType.glorious:
-          return 'Wednesday and Sunday';
-        case MysteryType.luminous:
-          return 'Thursday';
-      }
-    } else {
-      switch (this) {
-        case MysteryType.joyful:
-          return 'Lunes at Sabado';
-        case MysteryType.sorrowful:
-          return 'Martes at Biyernes';
-        case MysteryType.glorious:
-          return 'Miyerkules at Linggo';
-        case MysteryType.luminous:
-          return 'Huwebes';
-      }
+    final l10n = lookupAppLocalizations(Locale(lang));
+    switch (this) {
+      case MysteryType.joyful:
+        return l10n.mystery_day_joyful;
+      case MysteryType.sorrowful:
+        return l10n.mystery_day_sorrowful;
+      case MysteryType.glorious:
+        return l10n.mystery_day_glorious;
+      case MysteryType.luminous:
+        return l10n.mystery_day_luminous;
     }
   }
 
   List<String> getMysteryNames(String lang) {
-    if (lang == 'en') {
-      switch (this) {
-        case MysteryType.joyful:
-          return [
-            'The Annunciation of the Lord',
-            'The Visitation of Mary to Elizabeth',
-            'The Nativity of our Lord',
-            'The Presentation of Jesus in the Temple',
-            'The Finding of Jesus in the Temple',
-          ];
-        case MysteryType.sorrowful:
-          return [
-            'The Agony in the Garden',
-            'The Scourging at the Pillar',
-            'The Crowning with Thorns',
-            'The Carrying of the Cross',
-            'The Crucifixion and Death of our Lord',
-          ];
-        case MysteryType.glorious:
-          return [
-            'The Resurrection',
-            'The Ascension',
-            'The Descent of the Holy Spirit',
-            'The Assumption of Mary into Heaven',
-            'The Coronation of Mary as Queen of Heaven and Earth',
-          ];
-        case MysteryType.luminous:
-          return [
-            'The Baptism of Jesus in the Jordan',
-            'The Wedding at Cana',
-            'The Proclamation of the Kingdom',
-            'The Transfiguration',
-            'The Institution of the Eucharist',
-          ];
-      }
-    } else {
-      switch (this) {
-        case MysteryType.joyful:
-          return [
-            'Ang Pagpapahayag ng Anghel kay Maria',
-            'Ang Pagdalaw ni Maria kay Santa Isabel',
-            'Ang Kapanganakan ng ating Panginoon',
-            'Ang Paghahandog kay Jesus sa Templo',
-            'Ang Pagkawala at Pagkita kay Jesus sa Templo',
-          ];
-        case MysteryType.sorrowful:
-          return [
-            'Ang Paghihirap ni Jesus sa Halamanan ng Getsemani',
-            'Ang Paghahagupit kay Jesus sa Haligi',
-            'Ang Pagpuputong ng Koronang Tinik',
-            'Ang Pagpapasan ni Jesus ng Krus',
-            'Ang Pagpapako sa Krus at Pagkamatay ni Jesus',
-          ];
-        case MysteryType.glorious:
-          return [
-            'Ang Pagkabuhay ng ating Panginoon',
-            'Ang Pag-akyat ni Jesus sa Langit',
-            'Ang Pagbaba ng Espiritu Santo sa mga Apostol',
-            'Ang Pag-akyat ng Mahal na Birhen Maria sa Langit nang Walang Kamatayan',
-            'Ang Pagkokorona sa Mahal na Birhen Maria bilang Reyna ng Langit at Lupa',
-          ];
-        case MysteryType.luminous:
-          return [
-            'Ang Pagbibinyag kay Kristo',
-            'Ang Kasalan sa Cana',
-            'Ang Pagpapahayag ng Paghahari ng Diyos',
-            'Ang Pagbabagong Anyo ni Kristo',
-            'Ang Pagtatatag ng Eukaristiya',
-          ];
-      }
+    final l10n = lookupAppLocalizations(Locale(lang));
+    switch (this) {
+      case MysteryType.joyful:
+        return [
+          l10n.joyful_1,
+          l10n.joyful_2,
+          l10n.joyful_3,
+          l10n.joyful_4,
+          l10n.joyful_5,
+        ];
+      case MysteryType.sorrowful:
+        return [
+          l10n.sorrowful_1,
+          l10n.sorrowful_2,
+          l10n.sorrowful_3,
+          l10n.sorrowful_4,
+          l10n.sorrowful_5,
+        ];
+      case MysteryType.glorious:
+        return [
+          l10n.glorious_1,
+          l10n.glorious_2,
+          l10n.glorious_3,
+          l10n.glorious_4,
+          l10n.glorious_5,
+        ];
+      case MysteryType.luminous:
+        return [
+          l10n.luminous_1,
+          l10n.luminous_2,
+          l10n.luminous_3,
+          l10n.luminous_4,
+          l10n.luminous_5,
+        ];
     }
   }
 }

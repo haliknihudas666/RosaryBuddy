@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../core/localization/localization_data.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/models/mystery_type.dart';
 import '../../data/repositories/rosary_repository.dart';
 import '../../providers/app_settings_provider.dart';
@@ -112,7 +112,7 @@ class HomeScreen extends ConsumerWidget {
               // App Title
               Center(
                 child: Text(
-                  LocalizationData.getText(lang, 'app_title'),
+                  AppLocalizations.of(context).app_title,
                   style: GoogleFonts.cinzel(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 32,
@@ -124,7 +124,7 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               Center(
                 child: Text(
-                  '${LocalizationData.getText(lang, 'today_mystery')}: ${todayMystery.getDisplayName(lang)} (${todayMystery.emoji})',
+                  '${AppLocalizations.of(context).today_mystery}: ${todayMystery.getDisplayName(lang)} (${todayMystery.emoji})',
                   style: GoogleFonts.spectral(
                     color: textMutedColor,
                     fontSize: 14,
@@ -136,11 +136,8 @@ class HomeScreen extends ConsumerWidget {
               // Option 1: Interactive Rosary
               _buildMenuCard(
                 context: context,
-                title: LocalizationData.getText(lang, 'interactive_title'),
-                subtitle: LocalizationData.getText(
-                  lang,
-                  'interactive_subtitle',
-                ),
+                title: AppLocalizations.of(context).interactive_title,
+                subtitle: AppLocalizations.of(context).interactive_subtitle,
                 icon: Icons.explore_rounded,
                 onTap: () async {
                   final intention = await IntentionDialog.show(context);
@@ -160,9 +157,8 @@ class HomeScreen extends ConsumerWidget {
               // Option 2: Rosary Guide (Reading Mode)
               _buildMenuCard(
                 context: context,
-                title: LocalizationData.getText(lang, 'guide_title'),
-                subtitle:
-                    LocalizationData.getText(lang, 'guide_subtitle'),
+                title: AppLocalizations.of(context).guide_title,
+                subtitle: AppLocalizations.of(context).guide_subtitle,
                 icon: Icons.menu_book_rounded,
                 onTap: () {
                   Navigator.push(

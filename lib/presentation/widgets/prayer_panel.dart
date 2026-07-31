@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../core/localization/localization_data.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/models/rosary_step.dart';
 import 'pulsing_dot.dart';
 
@@ -79,9 +79,10 @@ class PrayerPanel extends StatelessWidget {
     final textMutedColor =
         isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
 
-    final stepWord = LocalizationData.getText(lang, 'step');
-    final ofWord = LocalizationData.getText(lang, 'of');
-    final readingWord = LocalizationData.getText(lang, 'reading');
+    final l10n = AppLocalizations.of(context);
+    final stepWord = l10n.step;
+    final ofWord = l10n.word_of;
+    final readingWord = l10n.reading;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -264,11 +265,7 @@ class PrayerPanel extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.volunteer_activism_rounded,
-                size: 16,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              const Text('🙏', style: TextStyle(fontSize: 16)),
               const SizedBox(width: 6),
               Text(
                 step.title.toUpperCase(),
@@ -302,10 +299,11 @@ class PrayerPanel extends StatelessWidget {
         isDark ? const Color(0xFFF5E6D3) : const Color(0xFF1A0F0A);
     final textMutedColor =
         isDark ? const Color(0xFFBFA98A) : const Color(0xFF5C3D2E);
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
-    final meditationWord = LocalizationData.getText(lang, 'meditation');
-    final nextOurFatherWord =
-        LocalizationData.getText(lang, 'next_our_father');
+    final l10n = AppLocalizations.of(context);
+    final meditationWord = l10n.meditation;
+    final nextOurFatherWord = l10n.next_our_father;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -314,18 +312,12 @@ class PrayerPanel extends StatelessWidget {
             isDark ? const Color(0xFF3D2517) : const Color(0xFFD2BEA6),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: Theme.of(context)
-              .colorScheme
-              .primary
-              .withValues(alpha: 0.40),
+          color: primaryColor.withValues(alpha: 0.40),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context)
-                .colorScheme
-                .primary
-                .withValues(alpha: 0.15),
+            color: primaryColor.withValues(alpha: 0.15),
             blurRadius: 8,
           ),
         ],
@@ -349,14 +341,69 @@ class PrayerPanel extends StatelessWidget {
               color: textMainColor,
               fontSize: 17,
               height: 1.5,
-              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF19100B) : const Color(0xFFFAF2E9),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color: primaryColor.withValues(alpha: 0.35),
+                width: 0.8,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text('💡', style: TextStyle(fontSize: 13)),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        l10n.decade_intention_title,
+                        style: GoogleFonts.cinzel(
+                          color: primaryColor,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.decade_intention_note,
+                  style: GoogleFonts.spectral(
+                    color: isDark
+                        ? const Color(0xFFD4C3AC)
+                        : const Color(0xFF4A3427),
+                    fontSize: 12.5,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  l10n.decade_intention_phrase,
+                  style: GoogleFonts.spectral(
+                    color: textMainColor,
+                    fontSize: 13.5,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
           Text(
             nextOurFatherWord,
             style: GoogleFonts.cinzel(
-              color: Theme.of(context).colorScheme.primary,
+              color: primaryColor,
               fontSize: 11,
               letterSpacing: 0.5,
               fontWeight: FontWeight.bold,

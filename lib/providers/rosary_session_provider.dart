@@ -63,6 +63,14 @@ class RosarySessionNotifier extends Notifier<RosarySessionState> {
     final repo = ref.read(rosaryRepositoryProvider);
     final lang = ref.read(languageProvider);
     final mystery = repo.getTodaysMystery();
+
+    // Listen for language changes to update steps dynamically
+    ref.listen<String>(languageProvider, (previous, next) {
+      if (previous != next) {
+        _updateLanguage(next);
+      }
+    });
+
     final steps = repo.buildSteps(mystery, lang);
     return RosarySessionState(
       mysteryType: mystery,
@@ -70,17 +78,26 @@ class RosarySessionNotifier extends Notifier<RosarySessionState> {
     );
   }
 
+  void _updateLanguage(String newLang) {
+    final repo = ref.read(rosaryRepositoryProvider);
+    final newSteps = repo.buildSteps(state.mysteryType, newLang, intention: state.intention);
+    final safeIndex = state.currentStepIndex.clamp(0, newSteps.length - 1);
+    state = _withBeadState(state.copyWith(
+      steps: newSteps,
+      currentStepIndex: safeIndex,
+    ));
+  }
+
   /// Initialise with an optional intention (called once on screen entry).
   void init({String? intention}) {
-    if (intention == null && state.intention == null) return;
     final repo = ref.read(rosaryRepositoryProvider);
     final lang = ref.read(languageProvider);
     final steps = repo.buildSteps(state.mysteryType, lang, intention: intention);
-    state = RosarySessionState(
+    state = _withBeadState(RosarySessionState(
       mysteryType: state.mysteryType,
       steps: steps,
       intention: intention,
-    );
+    ));
   }
 
   /// Returns `true` if the rosary was completed by this advance.

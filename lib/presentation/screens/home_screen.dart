@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../data/models/mystery_type.dart';
 import '../../data/repositories/rosary_repository.dart';
 import '../../providers/app_settings_provider.dart';
+import '../../providers/offline_audio_provider.dart';
 import '../widgets/intention_dialog.dart';
 import 'rosary_screen.dart';
 import 'rosary_guide_screen.dart';
@@ -16,6 +17,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lang = ref.watch(languageProvider);
+    final offlineState = ref.watch(offlineAudioProvider);
     final todayMystery = const RosaryRepository().getTodaysMystery();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textMutedColor =
@@ -31,7 +33,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Top Bar with Language Selector and Theme Toggle
+              // Top Bar with Language Selector, Theme Toggle, and Offline Audio
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -65,17 +67,44 @@ class HomeScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  // Theme Toggle
-                  IconButton(
-                    icon: Icon(
-                      isDark
-                          ? Icons.light_mode_rounded
-                          : Icons.dark_mode_rounded,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    onPressed: () {
-                      ref.read(themeModeProvider.notifier).toggle();
-                    },
+                  Row(
+                    children: [
+                      // Offline Audio Button
+                      IconButton(
+                        tooltip: 'Offline Prayers',
+                        icon: offlineState.isDownloading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              )
+                            : Icon(
+                                offlineState.isFullyDownloaded
+                                    ? Icons.offline_pin_rounded
+                                    : Icons.cloud_download_rounded,
+                                color: offlineState.isFullyDownloaded
+                                    ? const Color(0xFF4CAF50)
+                                    : Theme.of(context).colorScheme.primary,
+                              ),
+                        onPressed: () =>
+                            _showOfflineAudioDialog(context, ref),
+                      ),
+                      // Theme Toggle
+                      IconButton(
+                        icon: Icon(
+                          isDark
+                              ? Icons.light_mode_rounded
+                              : Icons.dark_mode_rounded,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        onPressed: () {
+                          ref.read(themeModeProvider.notifier).toggle();
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -323,4 +352,132 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _showOfflineAudioDialog(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final state = ref.watch(offlineAudioProvider);
+            final progress = state.totalCount > 0
+                ? state.downloadedCount / state.totalCount
+                : 0.0;
+            final percent = (progress * 100).toInt();
+
+            return AlertDialog(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: isDark
+                      ? const Color(0xFF5C3D2E)
+                      : const Color(0xFFD2BEA6),
+                ),
+              ),
+              title: Row(
+                children: [
+                  Icon(
+                    state.isFullyDownloaded
+                        ? Icons.offline_pin_rounded
+                        : Icons.cloud_download_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Offline Audio',
+                    style: GoogleFonts.cinzel(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    state.isFullyDownloaded
+                        ? 'All 58 prayer audio files in Tagalog and English are downloaded and ready for 100% offline use.'
+                        : 'Download prayer audio files to pray the Holy Rosary offline without internet connection.',
+                    style: GoogleFonts.spectral(fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+                  LinearProgressIndicator(
+                    value: state.totalCount > 0 ? progress : 0,
+                    backgroundColor: isDark
+                        ? const Color(0xFF2A1A12)
+                        : const Color(0xFFE8DCCF),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${state.downloadedCount} / ${state.totalCount} downloaded',
+                        style: GoogleFonts.spectral(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        '$percent%',
+                        style: GoogleFonts.cinzel(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Close',
+                    style: GoogleFonts.cinzel(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: state.isDownloading
+                      ? null
+                      : () {
+                          ref
+                              .read(offlineAudioProvider.notifier)
+                              .downloadAllPrayers();
+                        },
+                  icon: state.isDownloading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Icon(Icons.download_rounded, size: 18),
+                  label: Text(
+                    state.isDownloading
+                        ? 'Downloading...'
+                        : (state.isFullyDownloaded
+                            ? 'Re-download All'
+                            : 'Download Offline'),
+                    style: GoogleFonts.cinzel(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
+

@@ -40,6 +40,20 @@ class TtsNotifier extends Notifier<TtsState> {
   TtsState build() {
     _repo = TtsRepository();
 
+    // Listen for language changes to update TTS engine voice
+    ref.listen<String>(languageProvider, (previous, next) async {
+      if (previous != next) {
+        final wasSpeaking = state.isSpeaking;
+        await _repo.stop();
+        state = state.copyWith(ttsReady: false, isSpeaking: false);
+        await _repo.init(next);
+        state = state.copyWith(ttsReady: true);
+        if (wasSpeaking) {
+          speakCurrentStep();
+        }
+      }
+    });
+
     // Listen for audio completion to auto-advance.
     _repo.processingStateStream.listen((processingState) {
       if (processingState == ProcessingState.completed) {
@@ -95,12 +109,15 @@ class TtsNotifier extends Notifier<TtsState> {
 
     state = state.copyWith(isSpeaking: true);
 
+    final lang = ref.read(languageProvider);
     final session = ref.read(rosarySessionProvider);
     final targetIndex = session.currentStepIndex;
-    final ttsText = session.currentStep.ttsText;
+    final step = session.currentStep;
+    final ttsText = step.ttsText;
+    final audioKey = step.getAudioKey(lang);
 
     try {
-      await _repo.speak(ttsText);
+      await _repo.speak(ttsText, audioKey: audioKey);
     } catch (e) {
       debugPrint("TTS Error: $e");
       final currentSession = ref.read(rosarySessionProvider);

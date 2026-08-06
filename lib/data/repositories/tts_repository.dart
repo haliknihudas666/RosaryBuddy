@@ -4,12 +4,13 @@ import 'package:flutter_edge_tts/flutter_edge_tts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 
-/// Repository encapsulating TTS synthesis and audio playback.
-///
-/// This separates the audio/TTS lifecycle from the UI layer.
+import 'offline_audio_repository.dart';
+
+/// Repository encapsulating TTS synthesis, offline caching, and audio playback.
 class TtsRepository {
   FlutterEdgeTts? _edgeTts;
   final AudioPlayer audioPlayer = AudioPlayer();
+  final OfflineAudioRepository _offlineRepo = OfflineAudioRepository();
   String? _tempAudioPath;
   bool _isInitialized = false;
 
@@ -26,7 +27,11 @@ class TtsRepository {
       enableWordBoundary: false,
     );
 
-    await _edgeTts!.getVoices();
+    try {
+      await _edgeTts!.getVoices();
+    } catch (e) {
+      debugPrint("Edge TTS getVoices error (may be offline): $e");
+    }
 
     try {
       final tempDir = await getTemporaryDirectory();
@@ -39,29 +44,57 @@ class TtsRepository {
   }
 
   /// Synthesises and plays back the given [text].
-  ///
-  /// Returns immediately if TTS is not yet initialised.
-  Future<void> speak(String text) async {
-    if (!_isInitialized || _edgeTts == null) return;
-
+  /// If [audioKey] is provided, attempts to play from local cache first.
+  Future<void> speak(String text, {String? audioKey}) async {
     await audioPlayer.stop();
 
-    if (_tempAudioPath != null) {
-      await _edgeTts!.synthesizeToFile(
-        text,
-        audioFilePath: _tempAudioPath!,
-      );
-      await audioPlayer.setFilePath(_tempAudioPath!);
-      await audioPlayer.play();
-    } else {
-      // Fallback: direct synthesis to bytes
-      final result = await _edgeTts!.synthesize(text);
-      final tempFile = File(
-        '${Directory.systemTemp.path}/rosary_fallback.mp3',
-      );
-      await tempFile.writeAsBytes(result.audioBytes);
-      await audioPlayer.setFilePath(tempFile.path);
-      await audioPlayer.play();
+    // 1. Try local offline cache first
+    if (audioKey != null) {
+      final cachedPath = await _offlineRepo.getCachedFilePath(audioKey);
+      if (cachedPath != null) {
+        try {
+          await audioPlayer.setFilePath(cachedPath);
+          await audioPlayer.play();
+          return;
+        } catch (e) {
+          debugPrint("Error playing cached file ($audioKey): $e");
+        }
+      }
+    }
+
+    if (!_isInitialized || _edgeTts == null) return;
+
+    // 2. Synthesize via Edge TTS and cache result if online
+    try {
+      if (audioKey != null) {
+        final result = await _edgeTts!.synthesize(text);
+        if (result.audioBytes.isNotEmpty) {
+          final savedPath = await _offlineRepo.saveAudioBytes(audioKey, result.audioBytes);
+          await audioPlayer.setFilePath(savedPath);
+          await audioPlayer.play();
+          return;
+        }
+      }
+
+      if (_tempAudioPath != null) {
+        await _edgeTts!.synthesizeToFile(
+          text,
+          audioFilePath: _tempAudioPath!,
+        );
+        await audioPlayer.setFilePath(_tempAudioPath!);
+        await audioPlayer.play();
+      } else {
+        final result = await _edgeTts!.synthesize(text);
+        final tempFile = File(
+          '${Directory.systemTemp.path}/rosary_fallback.mp3',
+        );
+        await tempFile.writeAsBytes(result.audioBytes);
+        await audioPlayer.setFilePath(tempFile.path);
+        await audioPlayer.play();
+      }
+    } catch (e) {
+      debugPrint("TTS synthesis error: $e");
+      rethrow;
     }
   }
 
@@ -70,8 +103,7 @@ class TtsRepository {
     await audioPlayer.stop();
   }
 
-  /// Stream of processing state changes — useful for detecting playback
-  /// completion.
+  /// Stream of processing state changes — useful for detecting playback completion.
   Stream<ProcessingState> get processingStateStream =>
       audioPlayer.processingStateStream;
 

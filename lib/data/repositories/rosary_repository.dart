@@ -147,6 +147,7 @@ class RosaryRepository {
         beadType: BeadType.large,
         isMystery: true,
         mysterySubtitle: mysteryName,
+        customAudioKey: 'mystery_${mysteryType.name}_$d',
       ));
 
       // Our Father on the same large bead
